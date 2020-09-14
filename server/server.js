@@ -1,48 +1,26 @@
 
 require('./config/config')
 const express = require('express')
+const mongoose = require('mongoose'); //importamos mongoose
+
 const app = express()
 const bodyParser = require('body-parser');
 
 //parse aplicacion
 app.use(bodyParser.urlencoded({ extended: false }))
- 
+
 // parse application/json
 app.use(bodyParser.json())
 
 
-app.get('/usuario', function (req, res) {
-    
-  res.json('get usuario')
+
+app.use(require('./routes/usuario')); //usando rutas del usuario
+//conexión a la BD
+mongoose.connect(process.env.URLDB, (err, resp) => { //recibimos un error o una respuesta.
+    if (err) throw error; //si sae error me mostrará por qué
+    console.log('Base de datos ONLINE');
+});
+app.listen(process.env.PORT, () => {
+    console.log('Escuchando puerto', process.env_PORT);
 });
 
-app.post('/usuario', function (req, res) {
-
-    let body= req.body;
-    if(body.nombre ===undefined){
-        res.status(400).json({
-        ok:false,
-        mensaje: 'El nombre es neesario'    
-        });
-
-    }else{
-
-        res.json({
-            persona: body
-        });
-    }
-
-});
-app.put('/usuario/:id', function (req, res) {//obtenemos el parametro del id para ponder eliminarlo
-     let id=req.params.id;
-    res.json({
-     id   
-    });
-  });
-  
-  app.delete('/usuario', function (req, res) {
-      res.json('delete usuario')
-  });
-app.listen(process.env.PORT, ()=>{
- console.log('Escuchando puerto', 3000)   
-});
