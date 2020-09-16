@@ -3,11 +3,16 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const _ = require('underscore');//exportamos underscore
 const Usuario = require('../models/usuario'); //objeto para usar y trabajar con ese schema
+
+const{verificaToken, verificarAdmin_Role }= require('../middelwares/autenticacion'); 
+
 const { response } = require('express');
 
 const app = express()
-//obtener base de datos
-app.get('/usuario', function (req, res) {
+//obtener base de datos y ponemos middelwere
+app.get('/usuario', verificaToken, (req, res) =>{
+
+
     let desde = req.query.desde || 0;
     desde = Number(desde); //transformando a numero
 
@@ -38,7 +43,7 @@ app.get('/usuario', function (req, res) {
         })
 });
 
-app.post('/usuario', function (req, res) {
+app.post('/usuario', [verificaToken,verificarAdmin_Role] ,function (req, res) {
 
     let body = req.body; //recibimos toda la info 
 
@@ -71,7 +76,7 @@ app.post('/usuario', function (req, res) {
 
 });
 //actualizar el registro
-app.put('/usuario/:id', function (req, res) {//obtenemos el parametro del id para ponder eliminarlo
+app.put('/usuario/:id', [verificaToken,verificarAdmin_Role], function (req, res) {//obtenemos el parametro del id para ponder eliminarlo
     let id = req.params.id;
     let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']); //recibe el objeto que tiene todas las propiedades
 
@@ -98,7 +103,7 @@ app.put('/usuario/:id', function (req, res) {//obtenemos el parametro del id par
 
 //Borrando el registro
 
-app.delete('/usuario/:id', function (req, res) {
+app.delete('/usuario/:id', verificaToken ,function (req, res) {
   
 let id= req.params.id;
 

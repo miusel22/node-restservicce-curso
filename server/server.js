@@ -13,8 +13,10 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 
+//unica importacion que carga todas las rutas
 
-app.use(require('./routes/usuario')); //usando rutas del usuario
+app.use(require('./routes/index')); //usando rutas del usuario
+
 //conexión a la BD
 mongoose.connect(process.env.URLDB, (err, resp) => { //recibimos un error o una respuesta.
     if (err) throw error; //si sae error me mostrará por qué
